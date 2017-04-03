@@ -71,10 +71,14 @@
     // if first arg is an xapi statement, parse
     if( actor && actor.actor && actor.verb && actor.object ){
       var stmt = actor;
-      for(var i in stmt){
-        if(i != 'actor' && i != 'verb' && i != 'object')
-          this[i] = stmt[i];
+      for (var i in stmt) {
+        if (stmt.hasOwnProperty(i)) {
+          if (i !== 'actor' && i !== 'verb' && i !== 'object') {
+            this[i] = stmt[i];
+          }
+        }
       }
+
       actor = stmt.actor;
       verb = stmt.verb;
       object = stmt.object;
@@ -182,8 +186,10 @@
 
     // figure out what type of identifier was given
     if( identifier && (identifier.mbox || identifier.mbox_sha1sum || identifier.openid || identifier.account) ){
-      for(var i in identifier){
-        this[i] = identifier[i];
+      for (var i in identifier) {
+        if (identifier.hasOwnProperty(i)) {
+          this[i] = identifier[i];
+        }
       }
     }
     else if( /^mailto:/.test(identifier) ){
@@ -234,8 +240,10 @@
   {
     // if passed a verb object then copy and return
     if( id && id.id ){
-      for(var i in id){
-        this[i] = id[i];
+      for (var i in id) {
+        if (id.hasOwnProperty(i)) {
+          this[i] = id[i];
+        }
       }
       return;
     }
@@ -274,8 +282,10 @@
     // if first arg is activity, copy everything over
     if(id && id.id){
       var act = id;
-      for(var i in act){
-        this[i] = act[i];
+      for (var i in act) {
+        if (act.hasOwnProperty(i)) {
+          this[i] = act[i];
+        }
       }
       return;
     }
@@ -312,9 +322,11 @@
    * @param {string} id   The UUID of another xAPI statement
    */
   var StatementRef = function(id){
-    if(id && id.id){
-      for(var i in id){
-        this[i] = id[i];
+    if (id && id.id) {
+      for (var i in id) {
+        if (id.hasOwnProperty(i)) {
+          this[i] = id[i];
+        }
       }
     }
     else {

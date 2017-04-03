@@ -176,7 +176,8 @@ function isDate(date) {
                             var versionOK = false;
                             for (var idx in lrsabout.version)
                             {
-                                if(lrsabout.version[idx] == ADL.XAPIWrapper.xapiVersion)
+                                if(lrsabout.version.hasOwnProperty(idx)
+                                    && lrsabout.version[idx] == ADL.XAPIWrapper.xapiVersion)
                                 {
                                     versionOK = true;
                                     break;
@@ -396,9 +397,10 @@ function isDate(date) {
 
         for(var i in attachments)
         {
-
-            body += CRLF + '--' + boundary + CRLF + 'X-Experience-API-Hash:' + attachments[i].type.sha2 + CRLF + "Content-Type:application/octet-stream" + CRLF + "Content-Transfer-Encoding: binary" + CRLF + CRLF
-            body += attachments[i].value;
+            if (attachments.hasOwnProperty(i)) {
+                body += CRLF + '--' + boundary + CRLF + 'X-Experience-API-Hash:' + attachments[i].type.sha2 + CRLF + "Content-Type:application/octet-stream" + CRLF + "Content-Transfer-Encoding: binary" + CRLF + CRLF
+                body += attachments[i].value;
+            }
         }
         body += CRLF + "--" + boundary + "--" + CRLF
 
@@ -437,7 +439,9 @@ function isDate(date) {
         {
             for(var i in stmtArray)
             {
-                this.prepareStatement(stmtArray[i]);
+                if (stmtArray.hasOwnProperty(i)) {
+                    this.prepareStatement(stmtArray[i]);
+                }
             }
             var resp = ADL.XHR_request(this.lrs,this.lrs.endpoint+"statements",
                 "POST", JSON.stringify(stmtArray), this.lrs.auth, callback, null,
@@ -486,13 +490,15 @@ function isDate(date) {
             {
                 var urlparams = new Array();
 
-                for (s in searchparams)
+                for (var s in searchparams)
                 {
-                    if (s == "until" || s == "since") {
-                        var d = new Date(searchparams[s]);
-                        urlparams.push(s + "=" + encodeURIComponent(d.toISOString()));
-                    } else {
-                        urlparams.push(s + "=" + encodeURIComponent(searchparams[s]));
+                    if (searchparams.hasOwnProperty(s)) {
+                        if (s == "until" || s == "since") {
+                            var d = new Date(searchparams[s]);
+                            urlparams.push(s + "=" + encodeURIComponent(d.toISOString()));
+                        } else {
+                            urlparams.push(s + "=" + encodeURIComponent(searchparams[s]));
+                        }
                     }
                 }
                 if (urlparams.length > 0)
@@ -1220,7 +1226,11 @@ function isDate(date) {
     {
         for (var p in obj2)
         {
-            prop = obj2[p];
+            if (!obj2.hasOwnProperty(p)) {
+                continue;
+            }
+
+            var prop = obj2[p];
             log(p + " : " + prop);
             try
             {
@@ -1337,7 +1347,9 @@ function isDate(date) {
         //Headers
         if(headers !== null){
             for(var headerName in headers){
-                formData.push(headerName + "=" + encodeURIComponent(headers[headerName]));
+                if (headers.hasOwnProperty(headerName)) {
+                    formData.push(headerName + "=" + encodeURIComponent(headers[headerName]));
+                }
             }
         }
 
@@ -1444,7 +1456,9 @@ function isDate(date) {
         headers['X-Experience-API-Version'] = ADL.XAPIWrapper.xapiVersion;
         if(extraHeaders !== null){
             for(var headerName in extraHeaders){
-                headers[headerName] = extraHeaders[headerName];
+                if (extraHeaders.hasOwnProperty(headerName)) {
+                    headers[headerName] = extraHeaders[headerName];
+                }
             }
         }
 
@@ -1462,7 +1476,9 @@ function isDate(date) {
             xhr.withCredentials = withCredentials; //allow cross domain cookie based auth
             xhr.open(method, url, callback != null);
             for(var headerName in headers){
-                xhr.setRequestHeader(headerName, headers[headerName]);
+                if (headers.hasOwnProperty(headerName)) {
+                    xhr.setRequestHeader(headerName, headers[headerName]);
+                }
             }
         }
         //Otherwise, use IE's XDomainRequest object
